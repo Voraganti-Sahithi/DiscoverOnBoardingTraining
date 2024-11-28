@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demoApp1.dto.EmployeeDTO;
 import com.example.demoApp1.eo.Employee;
+import com.example.demoApp1.exceptions.EmployeeNotFoundException;
+import com.example.demoApp1.exceptions.EmployeeValidationException;
 import com.example.demoApp1.service.EmployeeService;
 
 @RestController
@@ -25,9 +28,15 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping("/create")
-    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
-    	EmployeeDTO createdEmployee = employeeService.createEmployee(employeeDTO);
-        return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
+    public ResponseEntity<?> createEmployee(@Validated @RequestBody EmployeeDTO employeeDTO) {
+        try {
+            EmployeeDTO createdEmployee = employeeService.createEmployee(employeeDTO);
+            return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
+        } catch (EmployeeValidationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+        }
     }
 
     @GetMapping("/all")
@@ -37,14 +46,26 @@ public class EmployeeController {
     }
 
     @GetMapping("/byId/{id}")
-    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable("id") Long id) {
-        EmployeeDTO employee = employeeService.getEmployeeById(id);
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+    public ResponseEntity<?> getEmployeeById(@PathVariable("id") Long id) {
+        try {
+            EmployeeDTO employee = employeeService.getEmployeeById(id);
+            return new ResponseEntity<>(employee, HttpStatus.OK);
+        } catch (EmployeeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+        }
     }
     
     @GetMapping("/byName/{name}")
-    public ResponseEntity<List<EmployeeDTO>> getEmployeeByName(@PathVariable("name") String name) {
-        List<EmployeeDTO> employees = employeeService.getEmployeeByName(name);
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+    public ResponseEntity<?> getEmployeeByName(@PathVariable("name") String name) {
+        try {
+            List<EmployeeDTO> employees = employeeService.getEmployeeByName(name);
+            return new ResponseEntity<>(employees, HttpStatus.OK);
+        } catch (EmployeeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+        }
     }
 }
