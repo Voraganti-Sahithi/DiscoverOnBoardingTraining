@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demoApp1.dto.EmployeeDTO;
-import com.example.demoApp1.eo.Employee;
 import com.example.demoApp1.exceptions.EmployeeNotFoundException;
 import com.example.demoApp1.exceptions.EmployeeValidationException;
 import com.example.demoApp1.service.EmployeeService;
+import com.example.demoApp1.util.Constants;
+import com.example.demoApp1.vo.Employee;
 
 @RestController
-@RequestMapping("api/employees")
+@RequestMapping(Constants.EMPLOYEE_API)
 public class EmployeeController {
 	@Autowired
     private EmployeeService employeeService;

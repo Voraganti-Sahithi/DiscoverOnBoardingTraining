@@ -1,4 +1,4 @@
-package com.example.demoApp1.eo;
+package com.example.demoApp1.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

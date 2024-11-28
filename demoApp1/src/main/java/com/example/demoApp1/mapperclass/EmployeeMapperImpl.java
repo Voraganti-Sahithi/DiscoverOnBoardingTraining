@@ -3,7 +3,7 @@ package com.example.demoApp1.mapperclass;
 import org.springframework.stereotype.Component;
 
 import com.example.demoApp1.dto.EmployeeDTO;
-import com.example.demoApp1.eo.Employee;
+import com.example.demoApp1.vo.Employee;
 
 @Component
 public class EmployeeMapperImpl implements EmployeeMapper{
